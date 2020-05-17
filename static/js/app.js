@@ -1,4 +1,43 @@
-(async function(){
+// Initialize subject_id variable to 0.
+// This will display data for subject 940.
+var subject_id = 0;
+
+function optionChanged(event) {
+    // Select dropdown menu
+    var dropdown = d3.select("#selDataset");
+    // Get value of item selected
+    var subject = dropdown.property("value");
+
+    
+    // Find index of that subject within sample.JSON
+    // Return that index
+    (async function() {
+        // Read in data from JSON
+        var data = await d3.json("data/samples.json");
+
+        // Set variable to refer to names array
+        var names = data.names;
+
+        // Loop through
+        var i;
+        for (i = 0; i<names.length ; i++) {
+            if (subject === names[i]) {
+                subject_id = i;
+                console.log(`subject ID: ${subject_id}`);
+                return subject_id;   
+            }
+        }
+        
+    })()
+    // console.log(`subject ID: ${subject_id}`);
+
+}
+
+// Set id variable to hold Subject ID selected from dropdown
+// subject_id = optionChanged();
+// console.log(`subject ID: ${subject_id}`);
+
+async function renderPage(subject_id){
     //------------------------------------------------------------------
     // Set Initial Data
     //------------------------------------------------------------------
@@ -32,14 +71,13 @@
     //--------------------------------------------------
     // Set Important Variables
     //--------------------------------------------------
-    // Set id variable to hold OTU ID selected from dropdown
-    var id = 0;
+
 
     // Set variables to hold sample values, OTU IDs, and OTU labels
-    // for selected subject
-    var sample_values = samples[id].sample_values;
-    var otu_ids = samples[id].otu_ids;
-    var otu_labels = samples[id].otu_labels;
+    // for subject selected from dropdown
+    var sample_values = samples[subject_id].sample_values;
+    var otu_ids = samples[subject_id].otu_ids;
+    var otu_labels = samples[subject_id].otu_labels;
     // var sample_values = data.samples.map(row => row.sample_values);
     // var otu_ids = data.samples.map(row => row[0].otu_ids);
     // var otu_labels = data.samples.map(row => row.otu_labels);    
@@ -63,8 +101,9 @@
 
     // Set Bar Chart for Top Ten Samples
     // Set trace
+    // Note: Add .reverse() so data displays in descending order.
     var bar_trace = {
-        x: top_ten_values.reverse(),
+        x: top_ten_values.reverse(),            
         y: top_ten_ids,
         type: "bar",
         orientation: "h",
@@ -75,7 +114,7 @@
 
     // Set layout
     var bar_layout = {
-        title: "Top Ten Bacteria in Test Subject",
+        title: `Top Ten Bacteria in Test Subject`,
         height: 600,
         width: 400,
         labels: top_ten_ids.reverse()
@@ -102,7 +141,7 @@
 
     // Set layout
     var bubble_layout = {
-        title: "All Bacteria Samples in Subject",
+        title: `All Bacteria Samples in Subject`,
         showlegend: false,
         height: 500,
         width: 1000
@@ -126,7 +165,7 @@
     var selected_metadata = []
 
     // Append metadata for that subject to array
-    selected_metadata.push(metadata[id]);
+    selected_metadata.push(metadata[subject_id]);
 
 
     // Select Demographics box from web page
@@ -147,7 +186,6 @@
                     <p>wfreq: ${d.wfreq}</p>`;
         });
     demographics.exit().remove();
-})()
+}
 
-// Dropdown menu
-// data.names
+renderPage(subject_id);
