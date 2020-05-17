@@ -1,10 +1,17 @@
 
 
+//------------------------------------------------------------------
+// Set Horizontal Bar Chart
+//------------------------------------------------------------------
 
 (async function(){
     // Read in data from JSON
     var data = await d3.json("data/samples.json");
+
+    // Set variable to refer to sample array
     var samples = data.samples;
+
+    // Set variables to hold sample values, OTU IDs, and OTU labels
     var sample_values = samples[0].sample_values;
     var otu_ids = samples[0].otu_ids;
     var otu_labels = samples[0].otu_labels;
@@ -12,6 +19,7 @@
     // var otu_ids = data.samples.map(row => row[0].otu_ids);
     // var otu_labels = data.samples.map(row => row.otu_labels);    
 
+    // Select top ten values (already sorted top to bottom in JSON)
     var top_ten_values = sample_values.slice(0, 10);
     var top_ten_labels = otu_labels.slice(0, 10);
     var ten_ids = otu_ids.slice(0, 10);
@@ -21,31 +29,66 @@
     var i;
     for (i = 0; i < ten_ids.length; i++) {
         var string = String(ten_ids[i]);
-        top_ten_ids.push(string);
+        top_ten_ids.push(`OTU ${string}`);
     }
 
-    // console.log(top_ten);
-    console.log(top_ten_values);
-    console.log(top_ten_ids);
-    console.log(top_ten_labels);
+    //--------------------------------------------------
+    // Set Plots
+    //--------------------------------------------------
 
-    var trace = {
-        x: top_ten_values,
+    // Set Bar Chart 
+    // Set trace
+    var bar_trace = {
+        x: top_ten_values.reverse(),
+        y: top_ten_ids,
         type: "bar",
         orientation: "h",
-        hovertext: top_ten_labels
+        hovertext: top_ten_labels.reverse()
     };
 
-    var trace_data = [trace];
+    var bar_trace_data = [bar_trace];
 
-    var layout = {
+    // Set layout
+    var bar_layout = {
         title: "Top Ten Bacteria in Test Subject",
-        height: 400,
+        height: 600,
         width: 400,
-        labels: top_ten_ids
+        labels: top_ten_ids.reverse()
     };
 
-    Plotly.newPlot("bar", trace_data, layout);
+    // Add plot
+    Plotly.newPlot("bar", bar_trace_data, bar_layout);
+
+
+    // Set Bubble Chart
+    // Set trace
+    var bubble_trace = {
+        x: otu_ids,
+        y: sample_values,
+        mode: "markers",
+        marker: {
+            size: sample_values,
+            color: otu_ids
+        },
+        text: otu_labels
+    };
+
+    var bubble_data = [bubble_trace];
+
+    // Set layout
+    var bubble_layout = {
+        title: "All Bacteria Samples in Subject",
+        showlegend: false,
+        height: 600,
+        width: 1200
+    };
+
+    Plotly.newPlot("bubble", bubble_data, bubble_layout);
+
+    //--------------------------------------------------
+    // Display Metadata
+    //--------------------------------------------------
+    
 })()
 
 // Dropdown menu
