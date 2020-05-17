@@ -82,8 +82,8 @@
     var bubble_layout = {
         title: "All Bacteria Samples in Subject",
         showlegend: false,
-        height: 600,
-        width: 1200
+        height: 500,
+        width: 1000
     };
 
     Plotly.newPlot("bubble", bubble_data, bubble_layout);
@@ -92,9 +92,7 @@
     // Display Metadata
     //--------------------------------------------------
 
-    // Select Demographics box from HTML
-    var demographics = d3.select("#sample-metadata");
-
+    
     var metadata = data.metadata;
     var selected_metadata = metadata[id];
     // console.log(metadata);
@@ -107,11 +105,13 @@
         console.log(selected_metadata["ethnicity"]);
     }
 
-    d3.select("#sample-metadata")
-        .selectAll("p")
-        .data(selected_metadata)
-        .enter()
+    // Select Demographics box from HTML
+    var demographics = d3.select("#sample-metadata").selectAll("p")
+        .data(selected_metadata);
+
+    demographics.enter()
         .append("p")
+        .merge(demographics)
         .html(function(d) {
             return `<p></p>`;
         });
@@ -122,7 +122,7 @@
         // <p>location: ${selected_metadata["location"]}</p>
         // <p>bbtype: ${selected_metadata["bbtype"]}</p>
         // <p>wfreq: ${selected_metadata["wfreq"]}</p>
-
+    demographics.exit().remove();
 })()
 
 // Dropdown menu
