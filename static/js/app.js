@@ -1,20 +1,42 @@
-
-
-//------------------------------------------------------------------
-// Set Horizontal Bar Chart
-//------------------------------------------------------------------
-
 (async function(){
+    //------------------------------------------------------------------
+    // Set Initial Data
+    //------------------------------------------------------------------
+
     // Read in data from JSON
     var data = await d3.json("data/samples.json");
+
+    // Set variable to refer to names array
+    var names = data.names;
 
     // Set variable to refer to sample array
     var samples = data.samples;
 
+    //--------------------------------------------------
+    // Populate All Subjects into Dropdown
+    //--------------------------------------------------
+
+    // Set variable to select dropdown menu
+    var dropdownMenu = d3.select("#selDataset").selectAll("option")
+        .data(names);
+
+    // Append an option tag holding a subject name to the dropdown menu
+    dropdownMenu.enter()
+        .append("option")
+        .merge(dropdownMenu)
+        .html(function(d) {
+            return d;
+        });
+
+
+    //--------------------------------------------------
+    // Set Important Variables
+    //--------------------------------------------------
     // Set id variable to hold OTU ID selected from dropdown
     var id = 0;
 
     // Set variables to hold sample values, OTU IDs, and OTU labels
+    // for selected subject
     var sample_values = samples[id].sample_values;
     var otu_ids = samples[id].otu_ids;
     var otu_labels = samples[id].otu_labels;
@@ -36,10 +58,10 @@
     }
 
     //--------------------------------------------------
-    // Set Plots
+    // Set Plots for Subject Selected from Dropdown
     //--------------------------------------------------
 
-    // Set Bar Chart 
+    // Set Bar Chart for Top Ten Samples
     // Set trace
     var bar_trace = {
         x: top_ten_values.reverse(),
@@ -63,7 +85,7 @@
     Plotly.newPlot("bar", bar_trace_data, bar_layout);
 
 
-    // Set Bubble Chart
+    // Set Bubble Chart for All Samples
     // Set trace
     var bubble_trace = {
         x: otu_ids,
@@ -89,9 +111,8 @@
     Plotly.newPlot("bubble", bubble_data, bubble_layout);
 
     //--------------------------------------------------
-    // Display Metadata
+    // Display Metadata for Subject
     //--------------------------------------------------
-
     
     var metadata = data.metadata;
     var selected_metadata = metadata[id];
@@ -99,21 +120,21 @@
     console.log(selected_metadata);
     console.log(selected_metadata["ethnicity"]);
 
-    // print all key/value pairs
-    var i;
-    for (i = 0; i<selected_metadata.length; i++) {
-        console.log(selected_metadata["ethnicity"]);
-    }
+    // // print all key/value pairs
+    // var i;
+    // for (i = 0; i<selected_metadata.length; i++) {
+    //     console.log(selected_metadata["ethnicity"]);
+    // }
 
     // Select Demographics box from HTML
     var demographics = d3.select("#sample-metadata").selectAll("p")
-        .data(selected_metadata);
+        .data(metadata);
 
     demographics.enter()
         .append("p")
         .merge(demographics)
         .html(function(d) {
-            return `<p></p>`;
+            return `<p>id: ${d.id}</p>`;
         });
         // <p>id: ${d.id}</p>
         // <p>ethnicity: ${selected_metadata["ethnicity"]}</p>
