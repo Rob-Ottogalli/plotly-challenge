@@ -114,35 +114,38 @@
     // Display Metadata for Subject
     //--------------------------------------------------
     
+    // Note: d3.selection.data requires data to be passed as an array, 
+    // so we will push our subject's metadata into an array
+    // before appending to the web page.
+
+    // Set variable to hold all metadata
     var metadata = data.metadata;
-    var selected_metadata = metadata[id];
-    // console.log(metadata);
-    console.log(selected_metadata);
-    console.log(selected_metadata["ethnicity"]);
 
-    // // print all key/value pairs
-    // var i;
-    // for (i = 0; i<selected_metadata.length; i++) {
-    //     console.log(selected_metadata["ethnicity"]);
-    // }
+    // Set empty array to hold metadata for that specific subject (id)
 
-    // Select Demographics box from HTML
+    var selected_metadata = []
+
+    // Append metadata for that subject to array
+    selected_metadata.push(metadata[id]);
+
+
+    // Select Demographics box from web page
     var demographics = d3.select("#sample-metadata").selectAll("p")
-        .data(metadata);
+        .data(selected_metadata);
 
+    // Append metadata to web page.  Set to merge and update when refreshed
     demographics.enter()
         .append("p")
         .merge(demographics)
-        .html(function(d) {
-            return `<p>id: ${d.id}</p>`;
+        .html(function(d, i) {
+            return `<p>id: ${d.id}</p>
+                    <p>ethnicity: ${d.ethnicity}</p>
+                    <p>gender: ${d.gender}</p>
+                    <p>age: ${d.age}</p>
+                    <p>location: ${d.location}</p>
+                    <p>bbtype: ${d.bbtype}</p>
+                    <p>wfreq: ${d.wfreq}</p>`;
         });
-        // <p>id: ${d.id}</p>
-        // <p>ethnicity: ${selected_metadata["ethnicity"]}</p>
-        // <p>gender: ${selected_metadata["gender"]}</p>
-        // <p>age: ${selected_metadata["age"]}</p>
-        // <p>location: ${selected_metadata["location"]}</p>
-        // <p>bbtype: ${selected_metadata["bbtype"]}</p>
-        // <p>wfreq: ${selected_metadata["wfreq"]}</p>
     demographics.exit().remove();
 })()
 
