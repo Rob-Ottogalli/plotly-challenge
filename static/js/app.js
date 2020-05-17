@@ -11,10 +11,13 @@
     // Set variable to refer to sample array
     var samples = data.samples;
 
+    // Set id variable to hold OTU ID selected from dropdown
+    var id = 0;
+
     // Set variables to hold sample values, OTU IDs, and OTU labels
-    var sample_values = samples[0].sample_values;
-    var otu_ids = samples[0].otu_ids;
-    var otu_labels = samples[0].otu_labels;
+    var sample_values = samples[id].sample_values;
+    var otu_ids = samples[id].otu_ids;
+    var otu_labels = samples[id].otu_labels;
     // var sample_values = data.samples.map(row => row.sample_values);
     // var otu_ids = data.samples.map(row => row[0].otu_ids);
     // var otu_labels = data.samples.map(row => row.otu_labels);    
@@ -88,7 +91,38 @@
     //--------------------------------------------------
     // Display Metadata
     //--------------------------------------------------
-    
+
+    // Select Demographics box from HTML
+    var demographics = d3.select("#sample-metadata");
+
+    var metadata = data.metadata;
+    var selected_metadata = metadata[id];
+    // console.log(metadata);
+    console.log(selected_metadata);
+    console.log(selected_metadata["ethnicity"]);
+
+    // print all key/value pairs
+    var i;
+    for (i = 0; i<selected_metadata.length; i++) {
+        console.log(selected_metadata["ethnicity"]);
+    }
+
+    d3.select("#sample-metadata")
+        .selectAll("p")
+        .data(selected_metadata)
+        .enter()
+        .append("p")
+        .html(function(d) {
+            return `<p></p>`;
+        });
+        // <p>id: ${d.id}</p>
+        // <p>ethnicity: ${selected_metadata["ethnicity"]}</p>
+        // <p>gender: ${selected_metadata["gender"]}</p>
+        // <p>age: ${selected_metadata["age"]}</p>
+        // <p>location: ${selected_metadata["location"]}</p>
+        // <p>bbtype: ${selected_metadata["bbtype"]}</p>
+        // <p>wfreq: ${selected_metadata["wfreq"]}</p>
+
 })()
 
 // Dropdown menu
