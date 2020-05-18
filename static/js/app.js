@@ -8,7 +8,6 @@ function optionChanged(event) {
     // Get value of item selected
     var subject = dropdown.property("value");
 
-    
     // Find index of that subject within sample.JSON
     // Return that index
     (async function() {
@@ -18,26 +17,23 @@ function optionChanged(event) {
         // Set variable to refer to names array
         var names = data.names;
 
-        // Loop through
+        // Loop through all values in names array
         var i;
         for (i = 0; i<names.length ; i++) {
+            // If value of item selected
+            // is equal to value of name,
             if (subject === names[i]) {
+                // set subject_id to index value of array.
                 subject_id = i;
-                console.log(`subject ID: ${subject_id}`);
-                return subject_id;   
+
+                // update page to show data for subject_id.
+                updatePage(subject_id);
             }
         }
-        
     })()
-    // console.log(`subject ID: ${subject_id}`);
-
 }
-
-// Set id variable to hold Subject ID selected from dropdown
-// subject_id = optionChanged();
-// console.log(`subject ID: ${subject_id}`);
-
-async function renderPage(subject_id){
+// Set function to display data for subject selected
+async function updatePage(subject_id){
     //------------------------------------------------------------------
     // Set Initial Data
     //------------------------------------------------------------------
@@ -67,28 +63,23 @@ async function renderPage(subject_id){
             return d;
         });
 
-
     //--------------------------------------------------
     // Set Important Variables
     //--------------------------------------------------
 
-
     // Set variables to hold sample values, OTU IDs, and OTU labels
     // for subject selected from dropdown
-    var sample_values = samples[subject_id].sample_values;
-    var otu_ids = samples[subject_id].otu_ids;
-    var otu_labels = samples[subject_id].otu_labels;
-    // var sample_values = data.samples.map(row => row.sample_values);
-    // var otu_ids = data.samples.map(row => row[0].otu_ids);
-    // var otu_labels = data.samples.map(row => row.otu_labels);    
+    sample_values = samples[subject_id].sample_values;
+    otu_ids = samples[subject_id].otu_ids;
+    otu_labels = samples[subject_id].otu_labels;
 
     // Select top ten values (already sorted top to bottom in JSON)
-    var top_ten_values = sample_values.slice(0, 10);
-    var top_ten_labels = otu_labels.slice(0, 10);
-    var ten_ids = otu_ids.slice(0, 10);
+    top_ten_values = sample_values.slice(0, 10);
+    top_ten_labels = otu_labels.slice(0, 10);
+    ten_ids = otu_ids.slice(0, 10);
 
     // Format ten_ids as strings, append to array top_ten_ids
-    var top_ten_ids = [];
+    top_ten_ids = [];
     var i;
     for (i = 0; i < ten_ids.length; i++) {
         var string = String(ten_ids[i]);
@@ -102,7 +93,7 @@ async function renderPage(subject_id){
     // Set Bar Chart for Top Ten Samples
     // Set trace
     // Note: Add .reverse() so data displays in descending order.
-    var bar_trace = {
+    bar_trace = {
         x: top_ten_values.reverse(),            
         y: top_ten_ids,
         type: "bar",
@@ -110,10 +101,10 @@ async function renderPage(subject_id){
         hovertext: top_ten_labels.reverse()
     };
 
-    var bar_trace_data = [bar_trace];
+    bar_trace_data = [bar_trace];
 
     // Set layout
-    var bar_layout = {
+    bar_layout = {
         title: `Top Ten Bacteria in Test Subject`,
         height: 600,
         width: 400,
@@ -126,7 +117,7 @@ async function renderPage(subject_id){
 
     // Set Bubble Chart for All Samples
     // Set trace
-    var bubble_trace = {
+    bubble_trace = {
         x: otu_ids,
         y: sample_values,
         mode: "markers",
@@ -137,10 +128,10 @@ async function renderPage(subject_id){
         text: otu_labels
     };
 
-    var bubble_data = [bubble_trace];
+    bubble_data = [bubble_trace];
 
     // Set layout
-    var bubble_layout = {
+    bubble_layout = {
         title: `All Bacteria Samples in Subject`,
         showlegend: false,
         height: 500,
@@ -158,18 +149,18 @@ async function renderPage(subject_id){
     // before appending to the web page.
 
     // Set variable to hold all metadata
-    var metadata = data.metadata;
+    metadata = data.metadata;
 
     // Set empty array to hold metadata for that specific subject (id)
 
-    var selected_metadata = []
+    selected_metadata = []
 
     // Append metadata for that subject to array
     selected_metadata.push(metadata[subject_id]);
 
 
     // Select Demographics box from web page
-    var demographics = d3.select("#sample-metadata").selectAll("p")
+    demographics = d3.select("#sample-metadata").selectAll("p")
         .data(selected_metadata);
 
     // Append metadata to web page.  Set to merge and update when refreshed
@@ -188,4 +179,12 @@ async function renderPage(subject_id){
     demographics.exit().remove();
 }
 
-renderPage(subject_id);
+
+// Set function to initalize page
+async function init() {
+    subject_id = 0;
+    updatePage(subject_id);
+}
+
+// Intialize page.
+init(subject_id);
