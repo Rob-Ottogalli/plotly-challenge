@@ -2,6 +2,7 @@
 // This will display data for subject 940.
 var subject_id = 0;
 
+// Set function to hold change event
 function optionChanged(event) {
     // Select dropdown menu
     var dropdown = d3.select("#selDataset");
@@ -90,7 +91,10 @@ async function updatePage(subject_id){
     // Set Plots for Subject Selected from Dropdown
     //--------------------------------------------------
 
+    //--------------------------------------------------
     // Set Bar Chart for Top Ten Samples
+    //--------------------------------------------------
+
     // Set trace
     // Note: Add .reverse() so data displays in descending order.
     bar_trace = {
@@ -114,8 +118,10 @@ async function updatePage(subject_id){
     // Add plot
     Plotly.newPlot("bar", bar_trace_data, bar_layout);
 
-
+    //--------------------------------------------------
     // Set Bubble Chart for All Samples
+    //--------------------------------------------------
+
     // Set trace
     bubble_trace = {
         x: otu_ids,
@@ -177,6 +183,39 @@ async function updatePage(subject_id){
                     <p>wfreq: ${d.wfreq}</p>`;
         });
     demographics.exit().remove();
+
+    //--------------------------------------------------
+    // Set Gauge Chart for Washing Frequency
+    //--------------------------------------------------
+
+    var wash_freq = metadata[subject_id].wfreq;
+
+    var gauge_data = [
+        {
+          domain: { x: [0, 1], y: [0, 1] },
+          value: wash_freq,
+          title: { text: "Washing Frequency of Subject" },
+          type: "indicator",
+          mode: "gauge+number",
+          gauge: {
+            axis: { range: [null, 9] },
+            steps: [
+              { range: [0, 1], color: "#A9A9A9" },
+              { range: [1, 2], color: "#B0B0B0" },
+              { range: [2, 3], color: "#B8B8B8" },
+              { range: [3, 4], color: "#BEBEBE" },
+              { range: [4, 5], color: "#C0C0C0" },
+              { range: [5, 6], color: "#D0D0D0" },
+              { range: [6, 7], color: "#D3D3D3" },
+              { range: [7, 8], color: "#D8D8D8" },
+              { range: [8, 9], color: "#DCDCDC" }
+            ],
+          }
+        }
+      ];
+      
+      var gauge_layout = { width: 600, height: 450, margin: { t: 0, b: 0 } };
+      Plotly.newPlot('gauge', gauge_data, gauge_layout);
 }
 
 
